@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.3/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.2/firebase-firestore.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyBaDphTXbRG6XTg-u2LBIhp04plQ7Ipsg0",
+        authDomain: "pi-hackathon.firebaseapp.com",
+        projectId: "pi-hackathon",
+        storageBucket: "pi-hackathon.appspot.com",
+        messagingSenderId: "747594716195",
+        appId: "1:747594716195:web:e4eed3c1a15b9457864d96"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    </script>
+
+<link
+href="https://fonts.googleapis.com/css?family=Poppins&display=swap"
+rel="stylesheet"
+/>
+<link
+rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+crossorigin="anonymous"
+/>
+ </head>
+  
+<body>
+
+<div class="signInAuths">
+
+<section id="whenSignedOut">
+
+    <h1 class="welcomeSign">Welcome!</h1>
+
+    <button id="signInBtn"><i id="googleIcon" class="fab fa-google"></i>Google Sign-in</button>
+
+    <button id="twitterSignInBtn" onclick = "twitterSignin()"><i id="twitterIcon" class="fab fa-twitter"></i>Twitter Sign-in</button>
+
+    <button id="githubSignInBtn" onclick = "githubSignin()"><i id="githubIcon" class="fab fa-github"></i>Github Sign-in</button>
+
+    <div id="errors"></div>
+
+
+</section>
+</div>
+
+<section id="whenSignedIn" hidden="true">
+
+  <!-- <div class="navbar">
+    <header>
+      <img class="logo" src="/images/unknown.png" alt="logo">
+      <nav>
+          <ul class="nav_links">
+              <li><a href="#">Schedular</a></li>
+              <li><a href="#">tutors</a></li>
+              <li><a href="#">Clubs</a></li>
+              <li><a href="#">Calenders</a></li>
+              <li><a href="#">Campus</a></li>
+          </ul>
+      </nav>
+      <a class="cta" href="#"><button>Login</button></a>
+  </header>
+</div> -->
+
+    <button id="signOutBtn">Sign out!</button>
+
+    <header>
+        <h1 id="headerToDo" class="headerToDo">Your To-Do List</h1>
+      </header>
+      <form id="todoForm" class="todoForm">
+        <input type="text" class="todo-input" />
+        <button class="todo-button" type="submit">
+          <i class="fas fa-plus-square"></i>
+        </button>
+        <div class="select">
+          <select name="todos" class="filter-todo">
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="uncompleted">Uncompleted</option>
+          </select>
+        </div>
+      </form>
+      <div class="todo-container" id="todo-container">
+        <ul class="todo-list"></ul>
+      </div>
+
+      <div class="social" id="social" hidden='true'>
+      </div>
+
+    <div id="linking">
+      <a id="scheduleLink" href="schedule.html">Schedule!</a>
+      <button id="socialButton">Click to show social!</button>
+      <button id="todoListButtonShowing">Click to show todo list!</button>
+    </div>
+
+  </div>
+
+
+</section>
+
+</body>
+</html>
