@@ -164,7 +164,98 @@ body{
   top: -500px;
 }
 
+.logo {
+    height: 100px;
+    width: 100px;
+}
 
+.t, .vishu, .karan {
+    font-family: 'Times New Roman', Times, serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: white;
+    text-decoration: none;
+    margin: 20px;
+    text-transform: uppercase;
+    position: relative;
+    top: 30px;
+}
+
+.header_home {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 10px;
+    background-color: black;
+    height: 50px;
+    position: relative;
+    top: -355px;
+}
+
+.logo {
+    cursor: pointer;
+}
+
+.nav_links {
+    list-style: none;
+}
+
+.nav_links li {
+    display: inline-block;
+    padding: 0px 20px;
+
+}
+
+.nav_links li a {
+    transition: all 0.3s ease 0s;
+
+
+}
+
+.nav_links li a:hover {
+    color: cyan;
+
+}
+
+.karan {
+    padding: 9px 25px;
+    background-color: rgba(orange);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+    color: black;
+
+}
+
+.karan:hover {
+    background-color: rgba(0, 136, 169, 0.8);
+}
+
+#profilePic{
+  border-radius: 50%;
+}
+
+#signOutBtn{
+  border: none;
+  border-radius: 25px;
+  color: white;
+  background-color: #1e1e1e;
+  cursor: pointer;
+  position: relative;
+  top: -85px;
+  right: -925px;
+}
+
+#socialButton{
+  border: none;
+  border-radius: 25px;
+  color: white;
+  background-color: #1e1e1e;
+  position: relative;
+  top: -30px;
+  right: 150px;
+}
 
     </style>
 </head>
@@ -184,38 +275,30 @@ body{
 
     <div id="errors"></div>
 
-
 </section>
 </div>
 
 <section id="whenSignedIn" hidden="true">
 
-  <!-- <div class="navbar">
-    <header>
-      <img class="logo" src="/images/unknown.png" alt="logo">
-      <nav>
-          <ul class="nav_links">
-              <li><a href="#">Schedular</a></li>
-              <li><a href="#">tutors</a></li>
-              <li><a href="#">Clubs</a></li>
-              <li><a href="#">Calenders</a></li>
-              <li><a href="#">Campus</a></li>
-          </ul>
-      </nav>
-      <a class="cta" href="#"><button>Login</button></a>
-  </header>
-</div> -->
+  <header class="header_home">
+    <img class="logo" src="https://media.discordapp.net/attachments/703106643923173397/848581883561771028/unknown.png" alt="logo">
+    <nav>
+        <ul class="nav_links">
+            <li class="t"><a href="schedule.html" class="vishu">Schedular</a></li>
+            <li class="t"><a href="#" class="vishu">Tutors</a></li>
+            <li class="t"><a href="#" class="vishu">Clubs</a></li>
+            <li class="t"><a href="#" class="vishu">Campus</a></li>
+            <li class="t"><a href="todo.html" class="vishu">To-do List!</a></li>
+            <div class="t"><button id="socialButton">Social</button></div>
+            <li class="t"><button id="signOutBtn">Sign out!</button></li>
+        </ul>
+    </nav>
+    <img src="" id="profilePic" alt="">
+</header>
 
-    <button id="signOutBtn">Sign out!</button>
 
       <div class="social" id="social" hidden='true'>
       </div>
-
-    <div id="linking">
-      <a id="scheduleLink" href="schedule.html">Schedule!</a>
-      <a href="todo.html">Todo!</a>
-      <button id="socialButton">Click to show social!</button>
-    </div>
   </div>
 </section>
 
@@ -236,6 +319,7 @@ const socialButton = document.getElementById('socialButton');
 const todoButtonShowing = document.getElementById('todoListButtonShowing');
 const usernameEnterForm = document.getElementById('usernameEnterForm');
 const linking = document.getElementById('linking');
+const profilePic = document.getElementById('profilePic')
 
 const provider = new firebase.auth.GoogleAuthProvider();
 var twitterprovider = new firebase.auth.TwitterAuthProvider();
@@ -303,7 +387,9 @@ auth.onAuthStateChanged(user => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data().userId);
             userTag = firebase.auth().currentUser.uid.substring(0, 4);
+            profilePic.src = `${firebase.auth().currentUser.photoURL}`
             userNameAndTagUser = `${firebase.auth().currentUser.displayName}#${userTag}`
+            
              if (firebase.auth().currentUser.uid == doc.data().userId) {
                  console.log('lol')
              } else {
