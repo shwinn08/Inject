@@ -75,3 +75,13 @@ p{
         cursor: pointer;
         margin: 5px;
 }
+.btn:hover{
+	background-color: #d729e3;
+}
+
+.h1{
+	position: absolute;
+	top: 350px;
+	left: 350px;
+	font-size: 50px;
+}
