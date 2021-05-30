@@ -55,4 +55,4 @@ lib = {
     'princeton': "Lewis Science Library, Marquand Art Library, and Stokes Library",
     'cornell': "Albert R. Mann Library, Uris Library, and John M. Olin Library"
 }
-
+app = Flask(__name__)
