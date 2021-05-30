@@ -56,3 +56,21 @@ lib = {
     'cornell': "Albert R. Mann Library, Uris Library, and John M. Olin Library"
 }
 app = Flask(__name__)
+@app.route('/', methods = ["POST", "GET"])
+def home():
+    if(request.method == "POST"):
+        college_name = request.form["search"]
+        college_name = college_name.lower()
+        if(college_name in names):
+            college_name = college_name.lower()
+            college_map = map1[college_name]
+            college_gyms = gyms[college_name]
+            college_res = res[college_name]
+            college_lib = lib[college_name]
+            return render_template("index.html", college_map = college_map, college_lib = college_lib, college_res = college_res, college_gyms = college_gyms, college_name = college_name)
+        else:
+            return "The college you have entered has not been added to this map database yet. We will try to add it soon. "
+    else:
+        return render_template("index.html")
+
+
