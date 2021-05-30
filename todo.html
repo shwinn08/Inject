@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-do List</title>
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"
+      integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk="
+      crossorigin="anonymous"
+    />
+    <!-- <link rel="stylesheet" href="./style.css" /> -->
+    <style>
+      * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  body {
+    background-color: #1e1e1e;
+    color: white;
+    font-family: "Poppins", sans-serif;
+    min-height: 100vh;
+  }
+  
+  header {
+    font-size: 2rem;
+  }
+  
+  h1{
+    text-shadow: 2px 5px rgb(18, 18, 19);
+  }
+
+  header,
+  form {
+    min-height: 20vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  form input,
+  form button {
+    padding: 0.5rem;
+    font-size: 2rem;
+    border: none;
+    background: white;
+  }
+  form button {
+    color: #141414;
+    background: #f7fffe;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  form button:hover {
+    background: #141414;
+    color: white;
+  }
+  .todo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .todo-list {
+    min-width: 30%;
+    list-style: none;
+  }
+  
+  .todo {
+    margin: 0.5rem;
+    background: white;
+    font-size: 1.5rem;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 1s ease;
+  }
+  .filter-todo {
+    padding: 1rem;
+  }
+  .todo li {
+    flex: 1;
+  }
+  
+  .trash-btn,
+  .complete-btn,
+  .urgent-btn {
+    background: #161616;
+    color: white;
+    border: none;
+    padding: 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+  }
+  .complete-btn {
+    background: #18191c;
+  }
+  .todo-item {
+    padding: 0rem 0.5rem;
+  }
+
+  .urgent-btn{
+    background: #111213;
+  }
+  
+  .urgent-btn::before{
+    content: lol;
+  }
+
+  .fa-trash,
+  .fa-check, 
+  .fa-exclamation {
+    pointer-events: none;
+  }
+  
+  .fall {
+    transform: translateY(10rem) rotateZ(20deg);
+    opacity: 0;
+  }
+  
+  .completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+  }
+  
+
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    box-shadow: none;
+    border: 0 !important;
+    background-image: none;
+  }
+
+
+  .select {
+    margin: 1rem;
+    position: relative;
+    overflow: hidden;
+  }
+  select {
+    color: #111213;
+    font-family: "Poppins", sans-serif;
+    cursor: pointer;
+    width: 12rem;
+  }
+
+  .select::after {
+    content: "\25BC";
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 1rem;
+    background: #101111;
+    cursor: pointer;
+    pointer-events: none;
+  }
+
+  .urgented{
+    background-color: red;
+  }
+
+  .urgent-btn:hover{
+    color: black;
+  }
+
+  .trash-btn:hover{
+    color: black;
+  }
+
+  .complete-btn:hover{
+    color: black;
+  }
+
+  
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Your To-do List</h1>
+    </header>
+    <form>
+      <input type="text" class="todo-input" />
+      <button class="todo-button" type="submit">
+        <i class="fas fa-plus-square"></i>
+      </button>
+      <div class="select">
+        <select name="todos" class="filter-todo">
+          <option value="all">All</option>
+          <option value="completed">Completed</option>
+          <option value="uncompleted">Uncompleted</option>
+        </select>
+      </div>
+    </form>
+    <div class="todo-container">
+      <ul class="todo-list"></ul>
+    </div>
+
+    <!-- <script src="./app.js"></script>
+     -->
+  </body>
+  <script defer>
+    const todoInput = document.querySelector(".todo-input");
+const todoButton = document.querySelector(".todo-button");
+const todoList = document.querySelector(".todo-list");
+const filterOption = document.querySelector(".filter-todo");
+
+document.addEventListener("DOMContentLoaded", getTodos);
+todoButton.addEventListener("click", addTodo);
+todoList.addEventListener("click", deleteTodo);
+filterOption.addEventListener("click", filterTodo);
+
+function addTodo(e) {
+
+  e.preventDefault();
+
+  const todoDiv = document.createElement("div");
+  todoDiv.classList.add("todo");
+
+  const newTodo = document.createElement("li");
+  newTodo.innerText = todoInput.value;
+  saveLocalTodos(todoInput.value);
+
+  newTodo.classList.add("todo-item");
+  todoDiv.appendChild(newTodo);
+  todoInput.value = "";
+
+  const completedButton = document.createElement("button");
+  completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+  completedButton.classList.add("complete-btn");
+  todoDiv.appendChild(completedButton);
+
+  const trashButton = document.createElement("button");
+  trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+  trashButton.classList.add("trash-btn");
+  todoDiv.appendChild(trashButton);
+
+  const urgentButton = document.createElement("button");
+  urgentButton.innerHTML = '<i class="fas fa-exclamation"></i>';
+  urgentButton.classList.add('urgent-btn')
+  todoDiv.appendChild(urgentButton);
+
+  todoList.appendChild(todoDiv);
+}
+
+function deleteTodo(e) {
+  const item = e.target;
+
+  if (item.classList[0] === "trash-btn") {
+
+    const todo = item.parentElement;
+    todo.classList.add("fall");
+
+    removeLocalTodos(todo);
+    todo.addEventListener("transitionend", e => {
+      todo.remove();
+    });
+  }
+  if (item.classList[0] === "complete-btn") {
+    const todo = item.parentElement;
+    todo.classList.toggle("completed");
+  }
+
+  if (item.classList[0] === "urgent-btn") {
+    const todo = item.parentElement;
+    todo.classList.toggle("urgented");
+  }
+}
+
+
+function filterTodo(e) {
+  const todos = todoList.childNodes;
+  todos.forEach(function(todo) {
+    switch (e.target.value) {
+      case "all":
+        todo.style.display = "flex";
+        break;
+      case "completed":
+        if (todo.classList.contains("completed")) {
+          todo.style.display = "flex";
+        } else {
+          todo.style.display = "none";
+        }
+        break;
+      case "uncompleted":
+        if (!todo.classList.contains("completed")) {
+          todo.style.display = "flex";
+        } else {
+          todo.style.display = "none";
+        }
+    }
+  });
+}
+
+function saveLocalTodos(todo) {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.push(todo);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function removeLocalTodos(todo) {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  const todoIndex = todo.children[0].innerText;
+  todos.splice(todos.indexOf(todoIndex), 1);
+  localStorage.setItem("todos", JSON.stringify(todos));
+}
+
+function getTodos() {
+  let todos;
+  if (localStorage.getItem("todos") === null) {
+    todos = [];
+  } else {
+    todos = JSON.parse(localStorage.getItem("todos"));
+  }
+  todos.forEach(function(todo) {
+
+    const todoDiv = document.createElement("div");
+    todoDiv.classList.add("todo");
+
+    const newTodo = document.createElement("li");
+    newTodo.innerText = todo;
+    newTodo.classList.add("todo-item");
+    todoDiv.appendChild(newTodo);
+    todoInput.value = "";
+
+    const completedButton = document.createElement("button");
+    completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+    completedButton.classList.add("complete-btn");
+    todoDiv.appendChild(completedButton);
+
+    const trashButton = document.createElement("button");
+    trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+    trashButton.classList.add("trash-btn");
+    todoDiv.appendChild(trashButton);
+
+    const urgentButton = document.createElement("button");
+    urgentButton.innerHTML = '<i class="fas fa-exclamation"></i>';
+    urgentButton.classList.add('urgent-btn')
+    todoDiv.appendChild(urgentButton);
+
+    todoList.appendChild(todoDiv);
+  });
+}
+  </script>
+</html>
