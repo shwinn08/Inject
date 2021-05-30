@@ -114,4 +114,344 @@ crossorigin="anonymous"
 </section>
 
 </body>
+<script defer>
+const auth = firebase.auth();
+
+const whenSignedIn = document.getElementById('whenSignedIn');
+const whenSignedOut = document.getElementById('whenSignedOut');
+
+const signInBtn = document.getElementById('signInBtn');
+const signOutBtn = document.getElementById('signOutBtn');
+const errorDiv = document.getElementById('errors');
+const todoInput = document.querySelector(".todo-input");
+const todoButton = document.querySelector(".todo-button");
+const todoList = document.querySelector(".todo-list");
+const filterOption = document.querySelector(".filter-todo");
+const todoForm = document.getElementById('todoForm');
+const headerToDo = document.getElementById('headerToDo');
+const divContainerThing = document.getElementById('todo-container');
+
+const socialDiv = document.getElementById('social');
+const socialButton = document.getElementById('socialButton');
+const todoButtonShowing = document.getElementById('todoListButtonShowing');
+const usernameEnterForm = document.getElementById('usernameEnterForm');
+const linking = document.getElementById('linking');
+
+const provider = new firebase.auth.GoogleAuthProvider();
+var twitterprovider = new firebase.auth.TwitterAuthProvider();
+var githubprovider = new firebase.auth.GithubAuthProvider();
+var db = firebase.firestore();
+
+
+function twitterSignin() {
+    firebase.auth().signInWithPopup(twitterprovider)
+    
+    .then(function(result) {
+        var token = result.credential.accessToken;
+        var user = result.user;
+            
+        console.log(token)
+        console.log(user)
+        }).catch(function(error) {
+        console.log(error.code)
+        console.log(error.message)
+        });
+}
+
+function githubSignin() {
+    firebase.auth().signInWithPopup(githubprovider)
+
+    .then(function(result) {
+        var token = result.credential.accessToken;
+        var user = result.user;
+            
+        console.log(token)
+        console.log(user)
+    }).catch(function(error) {
+        var errorCode = error.code;
+        var errorMessage = error.message;
+            
+        console.log(error.code)
+        console.log(error.message)
+
+        errorDiv.innerHTML = `<p>${error.message}</p>`
+    });
+}
+
+signInBtn.onclick = () => auth.signInWithPopup(provider);
+
+signOutBtn.onclick = () => auth.signOut();
+
+socialButton.onclick = () => {
+  socialDiv.hidden = false;
+  headerToDo.hidden = true;
+  todoForm.style.display = 'none';
+}
+
+todoButtonShowing.onclick = () => {
+  socialDiv.hidden = true;
+  headerToDo.hidden = false;
+  todoForm.style.display = 'flex';
+}
+
+auth.onAuthStateChanged(user => {
+    if (user) {
+        whenSignedIn.hidden = false;
+        whenSignedOut.hidden = true;
+        // userDetails.innerHTML = `<h3>Hello ${user.displayName}!</h3> <p>User ID: ${user.uid}</p>`;
+        userDetails.style.color = 'white';
+        console.log(user)
+
+        // var pfp = firebase.auth().currentUser.photoURL
+        // userDetails.innerHTML = `<h3>Hello ${user.displayName}!</h3><img src='${pfp}'> <p>User ID: ${user.uid}</p>`;
+        const { serverTimestamp } = firebase.firestore.FieldValue;
+        const userName = user.displayName
+
+        document.addEventListener("DOMContentLoaded", getTodos);
+        todoButton.addEventListener("click", addTodo);
+        todoList.addEventListener("click", deleteTodo);
+        filterOption.addEventListener("click", filterTodo);
+
+        function addTodo(e) {
+
+        e.preventDefault();
+
+        const todoDiv = document.createElement("div");
+        todoDiv.classList.add("todo");
+
+        const newTodo = document.createElement("li");
+        newTodo.innerText = todoInput.value;
+        saveLocalTodos(todoInput.value);
+
+        newTodo.classList.add("todo-item");
+        todoDiv.appendChild(newTodo);
+        todoInput.value = "";
+
+        const completedButton = document.createElement("button");
+        completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+        completedButton.classList.add("complete-btn");
+        todoDiv.appendChild(completedButton);
+
+        const trashButton = document.createElement("button");
+        trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+        trashButton.classList.add("trash-btn");
+        todoDiv.appendChild(trashButton);
+
+        const urgentButton = document.createElement("button");
+        urgentButton.innerHTML = '<i class="fas fa-exclamation"></i>';
+        urgentButton.classList.add('urgent-btn')
+        todoDiv.appendChild(urgentButton);
+
+        const { serverTimestamp } = firebase.firestore.FieldValue;
+
+        db.collection("todoList").set({
+            inputValue: newTodo.innerText,
+            uid: firebase.auth().currentUser.uid,
+            createdAt: serverTimestamp()
+        })
+
+        todoList.appendChild(todoDiv);
+        }
+
+        function deleteTodo(e) {
+        const item = e.target;
+
+        if (item.classList[0] === "trash-btn") {
+
+            const todo = item.parentElement;
+            todo.classList.add("fall");
+
+            removeLocalTodos(todo);
+            todo.addEventListener("transitionend", e => {
+            todo.remove();
+            });
+        }
+        if (item.classList[0] === "complete-btn") {
+            const todo = item.parentElement;
+            todo.classList.toggle("completed");
+        }
+
+        if (item.classList[0] === "urgent-btn") {
+            const todo = item.parentElement;
+            todo.classList.toggle("urgented");
+        }
+        }
+
+
+        function filterTodo(e) {
+        const todos = todoList.childNodes;
+        todos.forEach(function(todo) {
+            switch (e.target.value) {
+            case "all":
+                todo.style.display = "flex";
+                break;
+            case "completed":
+                if (todo.classList.contains("completed")) {
+                todo.style.display = "flex";
+                } else {
+                todo.style.display = "none";
+                }
+                break;
+            case "uncompleted":
+                if (!todo.classList.contains("completed")) {
+                todo.style.display = "flex";
+                } else {
+                todo.style.display = "none";
+                }
+            }
+        });
+        }
+
+        function saveLocalTodos(todo) {
+        let todos;
+        if (localStorage.getItem("todos") === null) {
+            todos = [];
+        } else {
+            todos = JSON.parse(localStorage.getItem("todos"));
+        }
+        todos.push(todo);
+        localStorage.setItem("todos", JSON.stringify(todos));
+        }
+
+        function removeLocalTodos(todo) {
+        let todos;
+        if (localStorage.getItem("todos") === null) {
+            todos = [];
+        } else {
+            todos = JSON.parse(localStorage.getItem("todos"));
+        }
+        const todoIndex = todo.children[0].innerText;
+        todos.splice(todos.indexOf(todoIndex), 1);
+        localStorage.setItem("todos", JSON.stringify(todos));
+        }
+
+        function getTodos() {
+        let todos;
+        if (localStorage.getItem("todos") === null) {
+            todos = [];
+        } else {
+            todos = JSON.parse(localStorage.getItem("todos"));
+        }
+        todos.forEach(function(todo) {
+
+            const todoDiv = document.createElement("div");
+            todoDiv.classList.add("todo");
+
+            const newTodo = document.createElement("li");
+            newTodo.innerText = todo;
+            newTodo.classList.add("todo-item");
+            todoDiv.appendChild(newTodo);
+            todoInput.value = "";
+
+            const completedButton = document.createElement("button");
+            completedButton.innerHTML = `<i class="fas fa-check"></i>`;
+            completedButton.classList.add("complete-btn");
+            todoDiv.appendChild(completedButton);
+
+            const trashButton = document.createElement("button");
+            trashButton.innerHTML = `<i class="fas fa-trash"></i>`;
+            trashButton.classList.add("trash-btn");
+            todoDiv.appendChild(trashButton);
+
+            const urgentButton = document.createElement("button");
+            urgentButton.innerHTML = '<i class="fas fa-exclamation"></i>';
+            urgentButton.classList.add('urgent-btn')
+            todoDiv.appendChild(urgentButton);
+
+            todoList.appendChild(todoDiv);
+        });
+    }
+
+            db.collection("userData").get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+            // doc.data() is never undefined for query doc snapshots
+            console.log(doc.id, " => ", doc.data().userId);
+            userTag = firebase.auth().currentUser.uid.substring(0, 4);
+            userNameAndTagUser = `${firebase.auth().currentUser.displayName}#${userTag}`
+             if (firebase.auth().currentUser.uid == doc.data().userId) {
+                 console.log('lol')
+             } else {
+                db.collection("userData").doc(userName).set({
+                    userId: user.uid,
+                    userName: user.displayName,
+                    userPhoto: user.photoURL,
+                    userEmail: user.email,
+                    userPhone: user.phoneNumber,
+                    userNameAndTag: userNameAndTagUser,
+                    createdAt: serverTimestamp()
+                })
+             }
+            });
+        });
+
+        db.collection("userData").get().then(function(querySnapshot) {
+        querySnapshot.forEach(function(doc) {
+          console.log(doc.id, " => ", doc.data().userNameAndTag);
+          socialDiv.innerHTML = `<p>Your username is ${firebase.auth().currentUser.displayName}#${userTag}</p>        
+          <form id="usernameEnterForm">
+          <input type="text" placeholder="Enter username" id="usernameInput">
+          <input type="submit" id="usernameSubmit">
+          </form>`
+
+          const usernameSubmit = document.getElementById('usernameSubmit');
+          const usernameInput = document.getElementById('usernameInput');
+          var listOfUserNames = [doc.data().userNameAndTag]
+          console.log(listOfUserNames)
+          usernameSubmit.onclick = (e) => {
+            e.preventDefault();
+            window.usernameInputValue = usernameInput.value;
+            console.log(window.usernameInputValue);
+            if (listOfUserNames.indexOf(window.usernameInputValue) > -1) {
+              e.preventDefault();
+              socialDiv.innerHTML = `<p>Your username is ${firebase.auth().currentUser.displayName}#${userTag}</p>
+            <h3>Friend request sent to ${window.usernameInputValue}</h3>`
+              db.collection("userData").doc(userName).set({
+                    userId: user.uid,
+                    userName: user.displayName,
+                    userPhoto: user.photoURL,
+                    userEmail: user.email,
+                    userPhone: user.phoneNumber,
+                    userNameAndTag: userNameAndTagUser,
+                    sentFriendRequests: window.usernameInputValue,
+                    createdAt: serverTimestamp()
+                  
+            })
+            }else{
+              e.preventDefault();
+              socialDiv.innerHTML = `<p>Your username is ${firebase.auth().currentUser.displayName}#${userTag}</p>        
+              <form id="usernameEnterForm">
+              <input type="text" placeholder="Enter username" id="usernameInput">
+              <input type="submit" id="usernameSubmit">
+              </form>
+              <h3 id="usernameNotFound">Person by that username not found</h3>`
+              return
+            }
+
+          }
+          var recievedFriendRequests = doc.data().sentFriendRequests;
+            if (recievedFriendRequests == db.collection("userData").doc(firebase.auth().currentUser.displayName).userNameAndTag) {
+              console.log('You have recieved a friend request!')
+              socialDiv.innerHTML = `<p>Your username is ${firebase.auth().currentUser.displayName}#${userTag}</p>        
+                <form id="usernameEnterForm">
+                <input type="text" placeholder="Enter username" id="usernameInput">
+                <input type="submit" id="usernameSubmit">
+                </form>
+                <h3 id="youGotFriendRequest">You have recieved a friend request from ${doc.id}</h3>`
+                return
+            } else {
+              return
+            }
+        });
+    });
+        
+    } else {
+        whenSignedIn.hidden = true;
+        whenSignedOut.hidden = false;
+        userDetails.innerHTML = '';
+    }
+});
+
+
+
+</script>
 </html>
