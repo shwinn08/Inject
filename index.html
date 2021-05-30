@@ -366,8 +366,14 @@ signInBtn.onclick = () => auth.signInWithPopup(provider);
 
 signOutBtn.onclick = () => auth.signOut();
 
+count = 0;
 socialButton.onclick = () => {
-  socialDiv.hidden = false;
+  count++;
+  if (count % 2 == 1) {
+    socialDiv.hidden = false;
+  } else {
+    socialDiv.hidden = true;
+  }
 }
 
 auth.onAuthStateChanged(user => {
