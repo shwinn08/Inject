@@ -1,0 +1,28 @@
+body{
+	background: rgb(252,252,186);
+background: linear-gradient(90deg, rgba(252,252,186,1) 0%, rgba(24,231,244,1) 0%, rgba(231,105,241,1) 100%, rgba(191,255,240,1) 100%);
+
+}
+
+p{
+	color: white;
+	font-size: 20px;
+}
+
+.name{
+	position: absolute;
+	left: 1350px;
+	top: 50px;
+}
+
+.gym{
+	position: absolute;
+	left: 950px;
+	top: 750px;
+}
+
+.res{
+	position: absolute;
+	left: 950px;
+	top: 800px;
+}
